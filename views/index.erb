@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Command Center</title>
+<style>
+body {
+  background-color: #272822;
+  color: white;
+}
+#command {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border: 1px solid #AFAFAE;
+  background-color: #272822;
+  color: white;
+}
+#result {
+  width: 100%;
+  display: block;
+  unicode-bidi: embed;
+  font-family: monospace;
+  white-space: pre;
+  margin-top: 10px;
+}
+input[type=button] {
+  background-color: #3E3E3C;
+  padding: 3px 10px;
+  border: 1px solid #AFAFAE;
+  color: #AFAFAE;
+}
+</style>
+</head>
+
+<body>
+
+<form action="/execute" onsubmit="form_submit(); return false">
+<input type="text" id="command" placeholder="Enter command here..." autofocus>
+</form>
+
+
+<input type="button" value="top" data-command="top -bn1"/>
+<input type="button" value="ps" data-command="ps -ef"/>
+<input type="button" value="df" data-command="df -h"/>
+<input type="button" value="du" data-command="sudo du --max-depth=1 --exclude=/proc / | sort -n"/>
+<input type="button" value="port" data-command="lsof -i | grep LISTEN"/>
+<input type="button" value="dmesg" data-command="dmesg"/>
+<input type="button" value="uptime" data-command="uptime"/>
+<input type="button" value="syslog" data-command="sudo tail -50 /var/log/syslog"/>
+<input type="button" value="hi" data-command="<%=h "echo \"hello world\"" %>"/>
+
+<div id="result"></div>
+
+<script>
+function request_execution(command)
+{
+  var body = document.querySelector("body")
+  var result = document.querySelector("#result")
+  result.innerHTML = ''
+
+  var xhr = new XMLHttpRequest()
+  xhr.last_length = 0
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState > 2) {
+      var new_response = xhr.responseText.substring(xhr.last_length)
+      result.innerHTML += new_response
+      xhr.last_length = xhr.responseText.length
+      body.scrollTop = body.scrollHeight
+    }
+  }
+
+  var params = "command=" + encodeURIComponent(command)
+
+  xhr.open("POST", "/execute", true)
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+  xhr.send(params)
+}
+
+function form_submit()
+{
+  var command = document.querySelector('#command')
+  request_execution(command.value)
+  command.select()
+}
+
+var buttons = document.querySelectorAll("input[type=button]")
+for (var i = 0; i < buttons.length; ++i) {
+  buttons[i].onclick = function() {
+    var commandElem = document.querySelector('#command')
+    var command = this.getAttribute("data-command")
+    commandElem.value = command
+    request_execution(command)
+    commandElem.select()
+  }
+}
+</script>
+
+</body>
+</html>
