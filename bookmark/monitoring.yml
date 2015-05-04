@@ -1,0 +1,12 @@
+- name: top
+  command: top -bn1
+- name: ps
+  command: ps -ef
+- name: df
+  command: df -h
+- name: du
+  command: sudo du --max-depth=1 --exclude=/proc / | sort -n
+- name: port
+  command: lsof -i | grep LISTEN
+- name: uptime
+  command: uptime

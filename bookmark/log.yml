@@ -1,0 +1,4 @@
+- name: dmesg
+  command: dmesg
+- name: syslog
+  command: sudo tail -50 /var/log/syslog

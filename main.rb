@@ -1,4 +1,6 @@
 require 'sinatra'
+require 'yaml'
+require 'json'
 require 'open3'
 
 configure do
@@ -34,5 +36,15 @@ class Stream
   end
 end
 
-get('/') { erb :index }
+get('/') do
+  @bookmark_categories = Dir.glob('bookmark/*.yml')
+  @bookmark_categories.map! { |s| File.basename(s, '.yml') }
+  erb :index
+end
+
+get('/bookmarks/:category') do |category|
+  str = File.read("bookmark/#{category}.yml")
+  YAML.load(str).to_json
+end
+
 post('/execute') { Stream.new(params[:command]) }
