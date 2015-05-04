@@ -7,8 +7,21 @@
 <script src="/javascripts/handlebars-v3.0.3.js"></script>
 <style>
 body {
+  padding: 5px;
   background-color: #272822;
   color: white;
+}
+#control_panel {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  background-color: #49483E;
+}
+.control_panel_fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
 }
 #command_text {
   width: 100%;
@@ -53,17 +66,19 @@ input[type=button] {
 
 <body>
 
-<form id="command_form" action="/execute">
-<input type="text" id="command_text" name="command" placeholder="Enter command here..." autofocus>
-</form>
+<div id="control_panel" class="control_panel_static">
+  <form id="command_form" action="/execute">
+  <input type="text" id="command_text" name="command" placeholder="Enter command here..." autofocus>
+  </form>
 
-<select id="bookmark_category">
-<% @bookmark_categories.each do |category| %>
-<option value="<%= category %>"><%= category %></option>
-<% end %>
-</select>
+  <select id="bookmark_category">
+  <% @bookmark_categories.each do |category| %>
+  <option value="<%= category %>"><%= category %></option>
+  <% end %>
+  </select>
 
-<div id="bookmark_list">
+  <div id="bookmark_list">
+  </div>
 </div>
 
 <div id="result"></div>
@@ -121,6 +136,14 @@ $(function () {
     var command = $(this).attr("data-command")
     $("#command_text").val(command).select()
     request_execution(command)
+  })
+
+  $(window).scroll(function() {
+    if ($(this).scrollTop() == 0) {
+      $('#control_panel').removeClass("control_panel_fixed")
+    } else {
+      $('#control_panel').addClass("control_panel_fixed")
+    }
   })
 })
 </script>
