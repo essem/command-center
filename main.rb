@@ -21,11 +21,16 @@ class Stream
   end
 
   def each
-    stdin, stdout_and_stderr, wait_thr = Open3.popen2e(@command)
+    begin
+      stdin, stdout_and_stderr, wait_thr = Open3.popen2e(@command)
+    rescue Exception => e
+      yield e.to_s
+      return
+    end
 
     begin
       while true
-        yield stdout_and_stderr.readpartial(2048)
+        yield Rack::Utils.escape_html(stdout_and_stderr.readpartial(2048))
       end
     rescue EOFError
       yield wait_thr.value.to_s
