@@ -130,7 +130,6 @@ $(function () {
     xhr.last_length = 0
 
     xhr.onreadystatechange = function() {
-      console.log("state: ", xhr.readyState)
       if (xhr.readyState > 2) {
         var new_response = xhr.responseText.substring(xhr.last_length)
         $("#result").append(new_response)
@@ -177,8 +176,26 @@ $(function () {
 
   $("#bookmark_list").on("click", "input[type=button]", function() {
     var command = $(this).attr("data-command")
-    $("#command_text").val(command).select()
-    request_execution(command)
+    var start = command.indexOf("{{")
+    var end = -1
+    if (start > -1) {
+      command = command.substr(0, start) + command.substr(start + 2)
+      end = command.indexOf("}}")
+      if (end > -1) {
+        command = command.substr(0, end) + command.substr(end + 2)
+      } else {
+        end = command.length
+      }
+    }
+    var command_text = $("#command_text")
+    command_text.val(command)
+    if (end != -1) {
+      command_text[0].setSelectionRange(start, end)
+      command_text.focus()
+    } else {
+      command_text.select()
+      request_execution(command)
+    }
   })
 
   $(window).scroll(function() {

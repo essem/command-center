@@ -1,0 +1,10 @@
+- name: status
+  command: git --git-dir=/vagrant/command_center/.git status
+- name: log
+  command: git --git-dir=/vagrant/command_center/.git log -10
+- name: gitk
+  command: git --git-dir=/vagrant/command_center/.git log --oneline --decorate --graph --all
+- name: search
+  command: git --git-dir=/vagrant/command_center/.git log -p -S {{keyword}}
+- name: commit
+  command: git --git-dir=/vagrant/command_center/.git commit -a -m "{{message}}"

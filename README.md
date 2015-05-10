@@ -37,11 +37,20 @@ Open your browser and connect to http://localhost:3030.
 ## Customize commands
 
 Add or modify .yml files in bookmark directory.
+
 ```YAML
 - name: dmesg
   command: dmesg
 - name: syslog
   command: sudo tail -50 /var/log/syslog
+```
+
+There can be a keyword surrounded by `{{` and `}}` mark in a command.
+Then instead of being executed immediately, the command is displayed and the keyword is selected.
+
+```YAML
+- name: commit
+  command: git commit -a -m "{{message}}"
 ```
 
 ## Sample upstart script for vagrant
